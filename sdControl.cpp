@@ -27,6 +27,8 @@ void SDControl::takeBusControl()	{
 	pinMode(MOSI_PIN, SPECIAL);	
 	pinMode(SCLK_PIN, SPECIAL);	
 	pinMode(SD_CS, OUTPUT);
+
+  Serial.println("Take bus control");
 }
 
 // ------------------------
@@ -38,6 +40,8 @@ void SDControl::relinquishBusControl()	{
 	pinMode(SD_CS, INPUT);
 	//LED_OFF;
 	_weTookBus = false;
+
+ Serial.println("Relinquish bus control");
 }
 
 bool SDControl::canWeTakeBus() {

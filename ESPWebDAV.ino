@@ -1,6 +1,3 @@
-// Using the WebDAV server with Rigidbot 3D printer.
-// Printer controller is a variation of Rambo running Marlin firmware
-
 #include "config.h"
 #include "network.h"
 #include "sdControl.h"
@@ -69,12 +66,11 @@ void readFile() {
 
   SdFat sdfat;
 
-  Serial.println("Going to load config from INI file");
-
   if (!sdcontrol.canWeTakeBus()) {
     Serial.println("Not able to take bus control");
     alpha2_state.setValue("Not able to take bus control");
     mqtt.loop();
+    return;
   }
 
   sdcontrol.takeBusControl();
@@ -85,6 +81,7 @@ void readFile() {
     mqtt.loop();
     sdcontrol.relinquishBusControl();
     //return -2;
+    return;
   }
 
   File file = sdfat.open("Logs/log.txt", FILE_READ);
@@ -94,6 +91,7 @@ void readFile() {
     mqtt.loop();
     sdcontrol.relinquishBusControl();
     //return -3;
+    return;
   }
 
   // Get SSID and PASSWORD from file
@@ -102,9 +100,6 @@ void readFile() {
   while (file.available()) { // check for EOF
     buffer = file.readStringUntil('\r');
     if (buffer.length() == 0) continue; // Empty line
-    //buffer.replace("\r", ""); // Delete all CR
-    //int iS = buffer.indexOf('\n'); // Get the seperator
-    //if(iS < 0) continue; // Bad line
     Serial.println(buffer);
     alpha2_data.setValue(buffer.c_str());
   }
@@ -112,7 +107,7 @@ void readFile() {
   file.close();
   sdcontrol.relinquishBusControl();
 
-  delay(1000);
+  delay(5000);
 
 }
 

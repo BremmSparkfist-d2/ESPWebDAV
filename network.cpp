@@ -2,7 +2,6 @@
 #include "config.h"
 #include "pins.h"
 #include "ESP8266WiFi.h"
-#include "ESPWebDAV.h"
 #include "sdControl.h"
 
 String IpAddress2String(const IPAddress& ipAddress)
@@ -46,41 +45,41 @@ bool Network::start() {
   Serial.print("IP address: "); Serial.println(WiFi.localIP());
   Serial.print("RSSI: "); Serial.println(WiFi.RSSI());
   Serial.print("Mode: "); Serial.println(WiFi.getPhyMode());
-  Serial.print("Asscess to SD at the Run prompt : \\\\"); Serial.print(WiFi.localIP());Serial.println("\\DavWWWRoot");
+//  Serial.print("Asscess to SD at the Run prompt : \\\\"); Serial.print(WiFi.localIP());Serial.println("\\DavWWWRoot");
 
   wifiConnected = true;
 
   config.save();
   String sIp = IpAddress2String(WiFi.localIP());
 
-  Serial.println("Going to start DAV server");
-  if(startDAVServer() < 0) return false;
+  //Serial.println("Going to start DAV server");
+  //if(startDAVServer() < 0) return false;
   wifiConnecting = false;
 
   return true;
 }
 
-int Network::startDAVServer() {
-  if(!sdcontrol.canWeTakeBus()) {
-    return -1;
-  }
-  sdcontrol.takeBusControl();
-  
-  // start the SD DAV server
-  if(!dav.init(SD_CS, SPI_FULL_SPEED, SERVER_PORT))   {
-    DBG_PRINT("ERROR: "); DBG_PRINTLN("Failed to initialize SD Card");
-    // indicate error on LED
-    //errorBlink();
-    initFailed = true;
-  }
-  else {
-    //blink();
-  }
-  
-  sdcontrol.relinquishBusControl();
-  DBG_PRINTLN("FYSETC WebDAV server started");
-  return 0;
-}
+//int Network::startDAVServer() {
+//  if(!sdcontrol.canWeTakeBus()) {
+//    return -1;
+//  }
+//  sdcontrol.takeBusControl();
+//  
+//  // start the SD DAV server
+//  if(!dav.init(SD_CS, SPI_FULL_SPEED, SERVER_PORT))   {
+//    DBG_PRINT("ERROR: "); DBG_PRINTLN("Failed to initialize SD Card");
+//    // indicate error on LED
+//    //errorBlink();
+//    initFailed = true;
+//  }
+//  else {
+//    //blink();
+//  }
+//  
+  //sdcontrol.relinquishBusControl();
+//  DBG_PRINTLN("FYSETC WebDAV server started");
+//  return 0;
+//}
 
 bool Network::isConnected() {
   return wifiConnected;
@@ -94,29 +93,29 @@ bool Network::isConnecting() {
 bool Network::ready() {
   if(!isConnected()) return false;
   
-  // do it only if there is a need to read FS
-	if(!dav.isClientWaiting())	return false;
-	
-	if(initFailed) {
-	  dav.rejectClient("Failed to initialize SD Card");
-	  return false;
-	}
-	
-	// has other master been using the bus in last few seconds
-	if(!sdcontrol.canWeTakeBus()) {
-		dav.rejectClient("Marlin is reading from SD card");
-		return false;
-	}
+//  // do it only if there is a need to read FS
+//	if(!dav.isClientWaiting())	return false;
+//	
+//	if(initFailed) {
+//	  dav.rejectClient("Failed to initialize SD Card");
+//	  return false;
+//	}
+//	
+//	// has other master been using the bus in last few seconds
+//	if(!sdcontrol.canWeTakeBus()) {
+//		dav.rejectClient("Marlin is reading from SD card");
+//		return false;
+//	}
 
 	return true;
 }
 
 void Network::handle() {
-  if(network.ready()) {
-	  sdcontrol.takeBusControl();
-	  dav.handleClient();
-	  sdcontrol.relinquishBusControl();
-	}
+//  if(network.ready()) {
+//	  sdcontrol.takeBusControl();
+//	  dav.handleClient();
+//	  sdcontrol.relinquishBusControl();
+//	}
 }
 
 Network network;

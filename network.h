@@ -10,7 +10,7 @@ class Network {
 public:
   Network() { initFailed = false;wifiConnecting = true;}
   bool start();
-  int startDAVServer();
+  //int startDAVServer();
   bool isConnected();
   bool isConnecting();
   void handle();

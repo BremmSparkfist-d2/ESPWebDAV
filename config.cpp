@@ -9,10 +9,8 @@
 int Config::loadSD() {
   SdFat sdfat;
 
-  Serial.println("Going to load config from INI file");
-
   if(!sdcontrol.canWeTakeBus()) {
-    Serial.println("Marlin is controling the bus");
+    Serial.println("Cannot take bus control");
     return -1;
   }
   sdcontrol.takeBusControl();
