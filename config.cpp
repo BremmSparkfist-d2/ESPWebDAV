@@ -13,6 +13,7 @@ int Config::loadSD() {
     Serial.println("Cannot take bus control");
     return -1;
   }
+  
   sdcontrol.takeBusControl();
   
   if(!sdfat.begin(SD_CS, SPI_FULL_SPEED)) {
