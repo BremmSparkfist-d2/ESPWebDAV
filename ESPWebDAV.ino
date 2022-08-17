@@ -22,19 +22,7 @@ void setup() {
   if(config.load() == 1) { // Connected before
     if(!network.start()) {
       Serial.println("Connect fail, please check your INI file or set the wifi config and connect again");
-      Serial.println("- M50: Set the wifi ssid , 'M50 ssid-name'");
-      Serial.println("- M51: Set the wifi password , 'M51 password'");
-      Serial.println("- M52: Start to connect the wifi");
-      Serial.println("- M53: Check the connection status");
     }
-  }
-  else {
-    Serial.println("Welcome to FYSETC: www.fysetc.com");
-    Serial.println("Please set the wifi config first");
-    Serial.println("- M50: Set the wifi ssid , 'M50 ssid-name'");
-    Serial.println("- M51: Set the wifi password , 'M51 password'");
-    Serial.println("- M52: Start to connect the wifi");
-    Serial.println("- M53: Check the connection status");
   }
 }
 
