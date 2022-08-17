@@ -1,11 +1,8 @@
 // Using the WebDAV server with Rigidbot 3D printer.
 // Printer controller is a variation of Rambo running Marlin firmware
 
-#include "serial.h"
-#include "parser.h"
 #include "config.h"
 #include "network.h"
-#include "gcode.h"
 #include "sdControl.h"
 
 // LED is connected to GPIO2 on this board
@@ -15,7 +12,7 @@
 
 // ------------------------
 void setup() {
-	SERIAL_INIT(115200);
+	Serial.begin(115200);
 	INIT_LED;
 	blink();
 	
@@ -24,20 +21,20 @@ void setup() {
 	// ----- WIFI -------
   if(config.load() == 1) { // Connected before
     if(!network.start()) {
-      SERIAL_ECHOLN("Connect fail, please check your INI file or set the wifi config and connect again");
-      SERIAL_ECHOLN("- M50: Set the wifi ssid , 'M50 ssid-name'");
-      SERIAL_ECHOLN("- M51: Set the wifi password , 'M51 password'");
-      SERIAL_ECHOLN("- M52: Start to connect the wifi");
-      SERIAL_ECHOLN("- M53: Check the connection status");
+      Serial.println("Connect fail, please check your INI file or set the wifi config and connect again");
+      Serial.println("- M50: Set the wifi ssid , 'M50 ssid-name'");
+      Serial.println("- M51: Set the wifi password , 'M51 password'");
+      Serial.println("- M52: Start to connect the wifi");
+      Serial.println("- M53: Check the connection status");
     }
   }
   else {
-    SERIAL_ECHOLN("Welcome to FYSETC: www.fysetc.com");
-    SERIAL_ECHOLN("Please set the wifi config first");
-    SERIAL_ECHOLN("- M50: Set the wifi ssid , 'M50 ssid-name'");
-    SERIAL_ECHOLN("- M51: Set the wifi password , 'M51 password'");
-    SERIAL_ECHOLN("- M52: Start to connect the wifi");
-    SERIAL_ECHOLN("- M53: Check the connection status");
+    Serial.println("Welcome to FYSETC: www.fysetc.com");
+    Serial.println("Please set the wifi config first");
+    Serial.println("- M50: Set the wifi ssid , 'M50 ssid-name'");
+    Serial.println("- M51: Set the wifi password , 'M51 password'");
+    Serial.println("- M52: Start to connect the wifi");
+    Serial.println("- M53: Check the connection status");
   }
 }
 
@@ -45,9 +42,6 @@ void setup() {
 void loop() {
   // handle the request
 	network.handle();
-
-  // Handle gcode
-  gcode.Handle();
 
   // blink
   statusBlink();

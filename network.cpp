@@ -1,5 +1,4 @@
 #include "network.h"
-#include "serial.h"
 #include "config.h"
 #include "pins.h"
 #include "ESP8266WiFi.h"
@@ -30,10 +29,10 @@ bool Network::start() {
   unsigned int timeout = 0;
   while(WiFi.status() != WL_CONNECTED) {
     //blink();
-    SERIAL_ECHO(".");
+    Serial.print(".");
     timeout++;
     if(timeout++ > WIFI_CONNECT_TIMEOUT/100) {
-      SERIAL_ECHOLN("");
+      Serial.println("");
       wifiConnecting = false;
       return false;
     }
@@ -41,20 +40,20 @@ bool Network::start() {
       delay(100);
   }
 
-  SERIAL_ECHOLN("");
-  SERIAL_ECHO("Connected to "); SERIAL_ECHOLN(config.ssid());
-  SERIAL_ECHO("IP address: "); SERIAL_ECHOLN(WiFi.localIP());
-  SERIAL_ECHO("RSSI: "); SERIAL_ECHOLN(WiFi.RSSI());
-  SERIAL_ECHO("Mode: "); SERIAL_ECHOLN(WiFi.getPhyMode());
-  SERIAL_ECHO("Asscess to SD at the Run prompt : \\\\"); SERIAL_ECHO(WiFi.localIP());SERIAL_ECHOLN("\\DavWWWRoot");
+  
+  Serial.print("Connected to ");
+  Serial.println(config.ssid());
+  Serial.print("IP address: "); Serial.println(WiFi.localIP());
+  Serial.print("RSSI: "); Serial.println(WiFi.RSSI());
+  Serial.print("Mode: "); Serial.println(WiFi.getPhyMode());
+  Serial.print("Asscess to SD at the Run prompt : \\\\"); Serial.print(WiFi.localIP());Serial.println("\\DavWWWRoot");
 
   wifiConnected = true;
 
   config.save();
   String sIp = IpAddress2String(WiFi.localIP());
-  config.save_ip(sIp.c_str());
 
-  SERIAL_ECHOLN("Going to start DAV server");
+  Serial.println("Going to start DAV server");
   if(startDAVServer() < 0) return false;
   wifiConnecting = false;
 

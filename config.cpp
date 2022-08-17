@@ -4,29 +4,28 @@
 #include <EEPROM.h>
 #include "pins.h"
 #include "config.h"
-#include "serial.h"
 #include "sdControl.h"
 
 int Config::loadSD() {
   SdFat sdfat;
 
-  SERIAL_ECHOLN("Going to load config from INI file");
+  Serial.println("Going to load config from INI file");
 
   if(!sdcontrol.canWeTakeBus()) {
-    SERIAL_ECHOLN("Marlin is controling the bus");
+    Serial.println("Marlin is controling the bus");
     return -1;
   }
   sdcontrol.takeBusControl();
   
   if(!sdfat.begin(SD_CS, SPI_FULL_SPEED)) {
-    SERIAL_ECHOLN("Initial SD failed");
+    Serial.println("Initial SD failed");
     sdcontrol.relinquishBusControl();
     return -2;
   }
 
   File file = sdfat.open("SETUP.INI", FILE_READ);
   if (!file) {
-    SERIAL_ECHOLN("Open INI file failed");
+    Serial.println("Open INI file failed");
     sdcontrol.relinquishBusControl();
     return -3;
   }
@@ -43,7 +42,7 @@ int Config::loadSD() {
     sKEY = buffer.substring(0,iS);
     sValue = buffer.substring(iS+1);
     if(sKEY == "SSID") {
-      SERIAL_ECHOLN("INI file : SSID found");
+      Serial.println("INI file : SSID found");
       if(sValue.length()>0) {
         memset(data.ssid,'\0',WIFI_SSID_LEN);
         sValue.toCharArray(data.ssid,WIFI_SSID_LEN);
@@ -55,7 +54,7 @@ int Config::loadSD() {
       }
     }
     else if(sKEY == "PASSWORD") {
-      SERIAL_ECHOLN("INI file : PASSWORD found");
+      Serial.println("INI file : PASSWORD found");
       if(sValue.length()>0) {
         memset(data.psw,'\0',WIFI_PASSWD_LEN);
         sValue.toCharArray(data.psw,WIFI_PASSWD_LEN);
@@ -70,7 +69,7 @@ int Config::loadSD() {
   }
   if(step != 2) { // We miss ssid or password
     //memset(data,) // TODO: do we need to empty the data?
-    SERIAL_ECHOLN("Please check your SSDI or PASSWORD in ini file");
+    Serial.println("Please check your SSDI or PASSWORD in ini file");
     rst = -6;
     goto FAIL;
   }
@@ -88,7 +87,7 @@ unsigned char Config::load() {
     return 1; // Return as connected before
   }
 
-  SERIAL_ECHOLN("Going to load config from EEPROM");
+  Serial.println("Going to load config from EEPROM");
 
   EEPROM.begin(EEPROM_SIZE);
   uint8_t *p = (uint8_t*)(&data);
@@ -99,9 +98,9 @@ unsigned char Config::load() {
   EEPROM.commit();
 
   if(data.flag) {
-    SERIAL_ECHOLN("Going to use the old config to connect the network");
+    Serial.println("Going to use the old config to connect the network");
   }
-  SERIAL_ECHOLN("We didn't connect the network before");
+  Serial.println("We didn't connect the network before");
   return data.flag;
 }
 
@@ -151,41 +150,6 @@ void Config::save() {
     EEPROM.write(i, *(p + i));
   }
   EEPROM.commit();
-}
-
-// Save to ip address to sdcard
-int Config::save_ip(const char *ip) {
-  SdFat sdfat;
-
-  SERIAL_ECHOLN("Going to save config to ip.gcode file");
-
-  if(!sdcontrol.canWeTakeBus()) {
-    SERIAL_ECHOLN("Marlin is controling the bus");
-    return -1;
-  }
-  sdcontrol.takeBusControl();
-  
-  if(!sdfat.begin(SD_CS, SPI_FULL_SPEED)) {
-    SERIAL_ECHOLN("Initial SD failed");
-    sdcontrol.relinquishBusControl();
-    return -2;
-  }
-
-  // Remove the old file
-  sdfat.remove("ip.gcode");
-
-  File file = sdfat.open("ip.gcode", FILE_WRITE);
-  if (!file) {
-    SERIAL_ECHOLN("Open ip file failed");
-    sdcontrol.relinquishBusControl();
-    return -3;
-  }
-
-  // Get SSID and PASSWORD from file
-  char buf[21] = "M117 ";
-  strncat(buf,ip,15);
-  file.write(buf, 21);
-  file.close();
 }
 
 Config config;
