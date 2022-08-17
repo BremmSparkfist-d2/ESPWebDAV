@@ -89,7 +89,6 @@ void readFile() {
   }
 
   String buffer;
-  
   while (file.available()) { // check for EOF
     buffer = file.readStringUntil('\r');
     if (buffer.length() == 0) continue; // Empty line
