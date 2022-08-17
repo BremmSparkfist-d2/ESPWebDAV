@@ -41,12 +41,7 @@ If you don't want to update the firmware. You don't need to do this. Compile and
 - Click the Arduino compile button
 
 #### Upload
-
-1. Pulg in the USB cable to your computer.
-2. Press and hold the module FLSH 
-3. Connect the USB cable to the module
-4. Release the module FLSH button
-5. Click the Arduino upload button
+You need to boot the ESP into flash-mode before you can upload any sketches onto it, ie. push flash-button down, press once on the reset-button, then let go of the flash-button.
 
 ### Config
 
