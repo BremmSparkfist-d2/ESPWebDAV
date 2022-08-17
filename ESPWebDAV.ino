@@ -51,15 +51,13 @@ void setup() {
 
 // ------------------------
 void loop() {
-  // handle the request
-  //network.handle();
-
-  // blink
   statusBlink();
 
   readFile();
 
   mqtt.loop();
+
+  delay(5000);
 }
 
 void readFile() {
@@ -69,7 +67,6 @@ void readFile() {
   if (!sdcontrol.canWeTakeBus()) {
     Serial.println("Not able to take bus control");
     alpha2_state.setValue("Not able to take bus control");
-    mqtt.loop();
     return;
   }
 
@@ -78,9 +75,7 @@ void readFile() {
   if (!sdfat.begin(SD_CS, SPI_FULL_SPEED)) {
     Serial.println("Initial SD failed");
     alpha2_state.setValue("Initial SD failed");
-    mqtt.loop();
     sdcontrol.relinquishBusControl();
-    //return -2;
     return;
   }
 
@@ -88,26 +83,21 @@ void readFile() {
   if (!file) {
     Serial.println("Open INI file failed");
     alpha2_state.setValue("Open INI file failed");
-    mqtt.loop();
+    
     sdcontrol.relinquishBusControl();
-    //return -3;
     return;
   }
 
-  // Get SSID and PASSWORD from file
-  int rst = 0, step = 0;
-  String buffer, sKEY, sValue;
   while (file.available()) { // check for EOF
     buffer = file.readStringUntil('\r');
     if (buffer.length() == 0) continue; // Empty line
+    
     Serial.println(buffer);
     alpha2_data.setValue(buffer.c_str());
   }
 
   file.close();
   sdcontrol.relinquishBusControl();
-
-  delay(5000);
 
 }
 
@@ -147,8 +137,4 @@ void statusBlink() {
     }
     time = millis();
   }
-
-  // SPI bus not ready
-  //if(millis() < spiBlockoutTime)
-  //	blink();
 }
